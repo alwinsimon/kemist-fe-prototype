@@ -62,7 +62,9 @@ These come from the engineering invariants. Violating one blocks the change.
 - **The offline chip is muted grey, never red.** Offline is normal operation for this product.
 - `font-variant-numeric: tabular-nums` on every number. Indian grouping: `₹1,23,456.78`.
 - Working grids: 32px rows, 13px text. Admin: 40px rows.
-- Focus ring always visible. `outline: none` appears nowhere in this codebase.
+- Focus ring always visible. The focus indicator is never suppressed. shadcn's `outline-none`
+  paired with a `focus-visible` ring is acceptable because the ring remains visible; removing the
+  outline with no replacement is not.
 - Transitions ≤120ms, state changes only. **No skeleton shimmer, no spinners** — local data renders.
 - Every user-visible string goes through the i18n catalogue. Malayalam runs 20–40% longer than
   English, so no fixed widths on anything containing a string.
@@ -124,3 +126,4 @@ pnpm test
   `tsconfig.app.json`. Keep both in sync when the alias changes. Neither copy sets `baseUrl` —
   TypeScript 6 deprecated it (TS5101, hard error), and `paths` resolves relative to the tsconfig's
   own directory without it.
+- Never run `git push`. Commits are fine; the user pushes manually.

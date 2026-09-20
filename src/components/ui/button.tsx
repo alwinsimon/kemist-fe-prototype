@@ -7,7 +7,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        // Solid brand-hover, not an opacity fade: on a washed-out monitor
+        // under fluorescent light an opacity-lightened primary reads as
+        // disabled, so the hover is a deliberately darker solid instead.
+        default: "bg-primary text-primary-foreground hover:bg-brand-hover",
         outline:
           "border-border bg-background shadow-xs hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:

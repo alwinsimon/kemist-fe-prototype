@@ -62,7 +62,8 @@ Build with CSS custom properties so a dark theme later costs nothing. Do not shi
 - **`font-variant-numeric: tabular-nums` on every quantity, price, total, batch number and date.** No exceptions.
 - Scale (px/weight): display-total 28/700 · h1 20/600 · h2 16/600 · body 14/400 · grid cell 13/400 ·
   caption 12/400 · hotkey chip 11/500 uppercase
-- Line height 1.45 body, 1.2 headings. Nothing renders below 12px anywhere.
+- Line height 1.45 body, 1.2 headings. No content text renders below 12px. The 11px hotkey chip is
+  the sole exception — it is a secondary annotation, uppercase with letterspacing, never prose.
 - Money: `₹` with Indian digit grouping — `₹1,23,456.78`, never `₹123,456.78`. Dates `DD-MM-YYYY`.
 - Numeric columns are right-aligned. Text columns are left-aligned. Never centre a number.
 

@@ -1,263 +1,242 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
 
-@custom-variant dark (&:is(.dark *));
+/* ============================================================================
+   Kemist token layer
+   ----------------------------------------------------------------------------
+   Two groups of variables live here:
+
+   1. The shadcn/ui contract (--background, --primary, --border …). shadcn
+      components read these. Do not rename them or components break.
+   2. The Kemist semantic state layer (--k-pos, --k-warn, --k-neg …). These carry
+      meaning specific to this product: stock status, expiry, sync.
+
+   NAME COLLISION — READ THIS
+   In the Kemist design system "accent" means the brand blue #2456E6.
+   In shadcn/ui "--accent" means a neutral hover/highlight surface.
+   They are NOT the same thing. The brand blue is mapped to --primary and --ring
+   below; --accent stays neutral so shadcn hover states behave correctly.
+   Never write the brand blue into --accent.
+
+   Dark theme is deferred. Everything is a CSS variable so adding it later is a
+   second :root block and no component changes.
+   ========================================================================== */
 
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: oklch(0.922 0 0);
-  --code-bg: #f4f3ec;
-  --accent: oklch(0.97 0 0);
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --radius: 0.375rem; /* 6px controls */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* ---- shadcn/ui contract ---- */
+  --background: #fafaf9;
+  --foreground: #1c1c1a;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --card: #ffffff;
+  --card-foreground: #1c1c1a;
+  --popover: #ffffff;
+  --popover-foreground: #1c1c1a;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  --primary: #2456e6;          /* Kemist brand blue — the only brand colour */
+  --primary-foreground: #ffffff;
 
-  --background: oklch(1 0 0);
+  --secondary: #f4f4f3;
+  --secondary-foreground: #1c1c1a;
 
-  --foreground: oklch(0.145 0 0);
+  --muted: #f4f4f3;
+  --muted-foreground: #6e6e6a;
 
-  --card: oklch(1 0 0);
+  --accent: #f4f4f3;           /* neutral hover surface — NOT the brand colour */
+  --accent-foreground: #1c1c1a;
 
-  --card-foreground: oklch(0.145 0 0);
+  --destructive: #c6222f;
+  --destructive-foreground: #ffffff;
 
-  --popover: oklch(1 0 0);
+  --border: #e4e4e2;
+  --input: #e4e4e2;
+  --ring: #2456e6;
 
-  --popover-foreground: oklch(0.145 0 0);
+  /* Sidebar/menu contract (drives components.json menuColor/menuAccent).
+     Mapped to Kemist tokens, not shadcn defaults — the active item is
+     shown by brand-blue TEXT plus a 2px left bar, never a filled pill. */
+  --sidebar: var(--k-surface);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--k-brand);
+  --sidebar-primary-foreground: var(--k-surface);
+  --sidebar-accent: var(--k-surface-2);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 
-  --primary: oklch(0.205 0 0);
+  /* Charts: single hue, no rainbow. Extra stops are tints of the same blue. */
+  --chart-1: #2456e6;
+  --chart-2: #5b82ee;
+  --chart-3: #92aef5;
+  --chart-4: #c0d0f9;
+  --chart-5: #e0e9fc;
 
-  --primary-foreground: oklch(0.985 0 0);
+  /* ---- Kemist semantic state layer ---- */
+  --k-brand: #2456e6;
+  --k-brand-hover: #1b44bf;
 
-  --secondary: oklch(0.97 0 0);
+  --k-surface: #ffffff;
+  --k-surface-2: #f4f4f3;      /* zebra rows, wells, hint bar */
 
-  --secondary-foreground: oklch(0.205 0 0);
+  --k-pos: #178a50;            /* success · synced · in stock */
+  --k-pos-bg: #e9f6ef;
+  --k-warn: #b96a00;           /* near expiry · pending sync · caution */
+  --k-warn-bg: #fcf3e3;
+  --k-neg: #c6222f;            /* expired · error · stock out · void */
+  --k-neg-bg: #fcebec;
 
-  --muted: oklch(0.97 0 0);
-
-  --muted-foreground: oklch(0.556 0 0);
-
-  --accent-foreground: oklch(0.205 0 0);
-
-  --destructive: oklch(0.577 0.245 27.325);
-
-  --input: oklch(0.922 0 0);
-
-  --ring: oklch(0.708 0 0);
-
-  --chart-1: oklch(0.87 0 0);
-
-  --chart-2: oklch(0.556 0 0);
-
-  --chart-3: oklch(0.439 0 0);
-
-  --chart-4: oklch(0.371 0 0);
-
-  --chart-5: oklch(0.269 0 0);
-
-  --radius: 0.625rem;
-
-  --sidebar: oklch(0.985 0 0);
-
-  --sidebar-foreground: oklch(0.145 0 0);
-
-  --sidebar-primary: oklch(0.205 0 0);
-
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-
-  --sidebar-accent: oklch(0.97 0 0);
-
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-
-  --sidebar-border: oklch(0.922 0 0);
-
-  --sidebar-ring: oklch(0.708 0 0)
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  /* ---- Layout constants ---- */
+  --k-row: 32px;               /* working grids: billing, stock, purchases */
+  --k-row-admin: 40px;         /* settings, users, lists */
+  --k-topbar: 44px;
+  --k-hintbar: 28px;
+  --k-nav: 200px;
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Inter Variable', sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
   --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Kemist semantic utilities: text-pos, bg-warn-bg, border-neg … */
+  --color-brand: var(--k-brand);
+  --color-brand-hover: var(--k-brand-hover);
+  --color-surface: var(--k-surface);
+  --color-surface-2: var(--k-surface-2);
+  --color-pos: var(--k-pos);
+  --color-pos-bg: var(--k-pos-bg);
+  --color-warn: var(--k-warn);
+  --color-warn-bg: var(--k-warn-bg);
+  --color-neg: var(--k-neg);
+  --color-neg-bg: var(--k-neg-bg);
+
+  --font-sans: Inter, "Noto Sans Malayalam", system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  /* --radius-xl/2xl/3xl/4xl are deliberately NOT defined. DESIGN.md allows
+     exactly two radii (6px controls, 8px cards); rounded-2xl/3xl are banned
+     outright. Leaving these undefined means a stray rounded-2xl/3xl class
+     renders unrounded and fails review, instead of silently working. Do not
+     add them back. */
+
+  --spacing-row: var(--k-row);
+  --spacing-rowadmin: var(--k-row-admin);
+  --spacing-topbar: var(--k-topbar);
+  --spacing-hintbar: var(--k-hintbar);
+  --spacing-nav: var(--k-nav);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;}
+    border-color: var(--border);
+  }
+
   body {
-    @apply bg-background text-foreground;}
-  html {
-    @apply font-sans;}}
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The focus ring is a navigation instrument, not a style choice.
+     Never override this with outline:none anywhere in the codebase. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Every number in this product is tabular. Apply .num to any numeric cell. */
+  .num,
+  [data-numeric],
+  input[inputmode="numeric"],
+  input[inputmode="decimal"] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    text-align: right;
+  }
+
+  /* One shadow level exists. There is no second one. */
+  .k-shadow {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+  }
+}
+
+@layer components {
+  /* Working-grid row. Density is the point: 32px, 13px text, zebra, 1px rules. */
+  .k-grid-row {
+    height: var(--k-row);
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  .k-grid-row:nth-child(even) {
+    background-color: var(--k-surface-2);
+  }
+
+  /* Focused row must be findable from one metre. */
+  .k-grid-row[data-focused="true"] {
+    background-color: color-mix(in srgb, var(--k-brand) 6%, transparent);
+    box-shadow: inset 2px 0 0 0 var(--k-brand);
+  }
+
+  /* Expired row: tint the whole row. Near-expiry: tint the expiry CELL only. */
+  .k-row-expired {
+    background-color: var(--k-neg-bg);
+  }
+  .k-cell-near-expiry {
+    background-color: var(--k-warn-bg);
+    color: var(--k-warn);
+  }
+
+  /* Hotkey chip — 11px uppercase, right-aligned inside buttons. */
+  .k-kbd {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted-foreground);
+  }
+}
+
+/* ============================================================================
+   Transition budget: 120ms, state changes only. If you find yourself wanting a
+   longer duration, the answer is no animation rather than a slower one.
+   Skeleton shimmer is banned outright — this data comes from a local process.
+   ========================================================================== */
