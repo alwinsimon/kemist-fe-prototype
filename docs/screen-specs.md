@@ -6,7 +6,12 @@
 >
 > **Amendment:** State A (product search open) now specifies the mandatory eleven-field, two-line,
 > 44px result row (Design System §7) in place of the earlier five-field 32px row. Seed data (§4) now
-> carries all eleven fields per product.
+> carries all eleven fields per product. **Amendment:** State A's composition display now binds
+> strength to salt and replaces the single `Same composition` alternatives group with three tiers
+> (Design System §7 "Composition display"; salts and schedule are now normalised in
+> `src/mocks/seed.ts`, not stored as product-level strings). **Amendment:** the dashboard's three
+> attention registers (§2) gain a conditional fourth, `Drug data`, per `docs/salt-model.md` §9 — shown
+> only when unacknowledged alerts exist.
 
 ---
 
@@ -101,13 +106,20 @@ Cards are not tinted. Deltas use `--k-pos` / `--k-neg` **ink only**, never a bac
   no legend
 - **Top 10 movers** — horizontal bars, single hue, `--chart-5`. Categorical data, so one colour
 
-**Row 3 — three attention registers**, equal width, each a 6-row 32px list with a header and a count.
+**Row 3 — three attention registers, conditionally four**, each a 6-row 32px list with a header and a
+count. Equal width: three when there is nothing to flag, four when there is.
 
 | Register | Rows show | Tint |
 |---|---|---|
 | Expiring in 30 days | product · batch · days left · value | Expiry banding applies |
 | Out of stock — fast movers | product · last sold · 30-day units | `● Nil` red tag, no row tint |
 | Credit due this week | party · amount · days overdue | Amber on overdue, red past 30 days |
+| Drug data *(conditional)* | product · class · shop value → Kemist value · detected | Sorted by severity, no row tint |
+
+**Drug data is conditional** (Salt Model §9): it appears **only when unacknowledged
+`drug_data_alert` rows exist**. With none, the other three widen to fill the row exactly as before —
+an empty queue earns no permanent space on a screen read 400 times a day. Header carries the
+unacknowledged count. Same shape as the other three: 6 rows, 32px, Enter-navigable.
 
 Every row Enter-navigable into its own screen with that filter applied.
 
@@ -235,11 +247,31 @@ Line 1 (14px)        Name (600) · CONTENT dose FORM              stock · MRP
 Line 2 (12px muted)  Manufacturer · Batch · Expiry · Rack         PTR · expiry badge
 ```
 
+CONTENT is composition, not a caption string — salts are entities (`docs/salt-model.md` §11, mirrored
+in Design System §7): strength is bound to its own salt, a search term that matched a salt highlights
+that salt and mutes the others, a schedule tag attaches to the specific salt that carries it, an
+`UNSPECIFIED` salt shows the neutral `?` marker instead of a schedule tag, and overflow shows complete
+salt+strength pairs plus a `+N more` chip rather than truncating mid-word. This governs
+`src/mocks/seed.ts`'s data shape, not just rendering. Billing renders every schedule tag identically
+regardless of whether it came from the master or a shop override — the override-marker visual
+distinction (dotted underline) is a product-master/inventory concern, out of scope for this state.
+
 Batch and Expiry shown are the FEFO batch that Enter would select — a preview, not the picker; `F2`
-(global, per the hint bar) opens the batch popover (state B) to override. First row selected. A
-second group headed `Same composition` lists alternatives; out-of-stock items show `Nil` in red and
-sort last. Caption: `↑↓ select   ⏎ add   Tab batch   Esc close`. **No spinner, no "Searching…", no
-shimmer.**
+(global, per the hint bar) opens the batch popover (state B) to override. First row selected.
+
+**Tiered alternatives**, replacing the single `Same composition` group, in this order:
+
+| Group | Condition |
+|---|---|
+| `Same composition` | Identical salt set **and** identical strengths |
+| `Same salts, different strength` | Salt set matches; at least one strength differs |
+| `Contains <SALT>` | Exactly one salt matches (named in the header) |
+
+Out-of-stock items show `Nil` in red and sort last **within each group**, not across the whole list.
+A product with no alternative in any tier shows no alternatives section at all — an empty group
+header is worse than no header.
+
+Caption: `↑↓ select   ⏎ add   Tab batch   Esc close`. **No spinner, no "Searching…", no shimmer.**
 
 **B — Batch picker.** Popover anchored to the line, 320px, not a centre modal. Rows: Batch · Expiry ·
 Qty · MRP, with expiry banding applied per row. FEFO batch preselected and tagged. Caption:

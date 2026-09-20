@@ -9,7 +9,12 @@
 > **Amendment:** the four expiry-band tints and `--k-warn-700` were widened/darkened (see §3.2 and the
 > contrast note in §4) for better visibility against the row background. **Amendment:** search/picker
 > result rows are now specified as a two-line, 44px, eleven-field row (§7, "Search/picker result row"),
-> distinct from the 32px single-line working-grid row — see §6 and §13 item 6.
+> distinct from the 32px single-line working-grid row — see §6 and §13 item 6. **Amendment:** salts are
+> now entities, not a caption string — strength binds to its own salt, match highlighting works at the
+> salt level, and schedule tags attach per-salt (§7, "Composition display"). **Amendment:** schedule
+> classification is a resolved rule (`salt_schedule_rule`), not a flat flag, per `docs/salt-model.md`
+> V4 — added the `UNSPECIFIED` marker (nobody has classified this yet, distinct from `NONE`) and the
+> shop-override marker (§7).
 
 ---
 
@@ -315,6 +320,38 @@ Line 2 (12px muted)  Manufacturer · Batch · Expiry · Rack         PTR · badg
 
 - **CONTENT renders uppercase** (`text-transform: uppercase`) — a presentation rule, not a stored
   data convention; the underlying salt string stays proper-case in the data layer.
+
+**Composition display — salts are entities, not a caption string.** Source of truth:
+`docs/salt-model.md` §11 — this section mirrors it; where the two ever diverge, the Salt Model wins
+(it is newer and this section gets amended, never left in conflict). A product's composition is an
+ordered list of `{salt, strength, unit}`, and schedule is a property of the *salt*, resolved from a
+rule (`salt_schedule_rule`), not a flat product- or salt-level flag. The rules below are a correctness
+matter before they are a style matter — a wrong-strength read here is a dispensing error, not a typo:
+
+- **Bind strength to salt.** Render `PANTOPRAZOLE 40mg + DOMPERIDONE 30mg`, never
+  `PANTOPRAZOLE + DOMPERIDONE 40mg + 30mg`. `+` separates salts; nothing ever separates a salt from
+  its own strength — positional pairing across a combined name and a combined strength string is a
+  wrong-strength dispensing risk. This governs how `src/mocks/seed.ts` must store composition (an
+  array of salt+strength+unit triples in order), not just how it renders.
+- **Match highlighting.** When a search term matches a salt (**exact salt-ID match, not
+  substring**), that salt renders in `--k-ink`; every other salt in the same combination renders in
+  `--k-ink-muted`. This is how a chemist sees *why* a row matched when the term isn't in the brand
+  name at all.
+- **Salt-level schedule tags.** The determined-schedule chip — `NARCOTIC`/`X`/`H1`/`H` — attaches
+  immediately after the strength of the salt that actually carries it —
+  `CHLORDIAZEPOXIDE 5mg [H1] + CLIDINIUM 2.5mg` — red outline, never filled, same as every other
+  schedule chip in the system. A single-salt product keeps one product-level tag (it has only one
+  salt to attach it to). `NONE` (determined: not scheduled) shows no chip at all.
+- **`UNSPECIFIED` marker.** A muted `?` chip after the strength — neutral, never red, because it's
+  missing information, not a warning. Means *nobody has classified this yet*, distinct from `NONE`
+  (determined: not scheduled). Shown in inventory and the product master. **Never shown in billing**,
+  where it would be noise the biller can't act on.
+- **Override marker.** A product whose classification comes from a shop override (`source: "shop"`)
+  shows the tag with a dotted underline in inventory and the product master. **In billing it renders
+  as a normal tag** — the biller needs the classification, not its provenance.
+- **Overflow.** Never truncate a salt name mid-word. Show as many complete `salt+strength` pairs
+  as fit the available width, then a muted `+N more` chip; expandable, not a dead end.
+
 - **Batch and Expiry shown are the FEFO batch** — the batch Enter would select by default — as a
   **preview**, not the picker. `F2` still opens the full batch popover (§Screen Specs) to override.
 - The expiry badge (§4) applies to this preview batch exactly as it does to a grid row: present only

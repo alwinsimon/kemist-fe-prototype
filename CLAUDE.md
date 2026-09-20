@@ -21,7 +21,7 @@ src/api/client.ts       reads from mocks now; reads from the node later
 
 ## Read before any UI work
 
-The repo-root `DESIGN.md` is retired — `docs/design-system.md` replaces it. Four docs in `docs/` are
+The repo-root `DESIGN.md` is retired — `docs/design-system.md` replaces it. Five docs in `docs/` are
 the binding contract, in precedence order (conflicts resolve upward, never silently chosen). Each
 document carries its own version in its header, not in the filename, so these paths stay stable
 across revisions:
@@ -31,6 +31,10 @@ across revisions:
    accessibility, the review gate (§13)
 3. `docs/frontend-standards.md` — code structure, performance
 4. `docs/screen-specs.md` — per-screen specs
+5. `docs/salt-model.md` — the salt entity, composition, schedule classification and its resolution,
+   search/substitution semantics, and composition display. Not in the ordinal chain above but wins on
+   these specific subjects regardless — it's newer, and the older docs get amended to match, never
+   left in conflict with it.
 
 Read the relevant ones before generating, editing or reviewing any component. Where your instinct
 and a doc disagree, the doc wins. Do not restyle anything "to look better".
