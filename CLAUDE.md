@@ -86,6 +86,12 @@ These come from the engineering invariants. Violating one blocks the change.
   just the expiry cell.
 - **The offline chip is muted grey, never red.** Offline is normal operation for this product.
 - `font-variant-numeric: tabular-nums` on every number. Indian grouping: `₹1,23,456.78`.
+- **Dates are ISO in storage, `DD-MM-YYYY` (or the `MM-YYYY`/`MM-YY` expiry variants) in the UI, and
+  `src/lib/format.ts`'s `formatDate`/`formatExpiry`/`formatExpiryShort` are the only bridge between
+  them.** No component formats a date inline. Storage never changes to match the display order — the
+  schedule resolver (`src/mocks/seed.ts`) compares effective dates lexicographically, which is only
+  correct when the most significant component is leftmost (ISO). Money the same way:
+  `formatMoney` is the only place `₹`/Indian grouping happens.
 - Working grids: 32px rows, 14px text. Admin: 40px rows.
 - Focus ring always visible. The focus indicator is never suppressed. shadcn's `outline-none`
   paired with a `focus-visible` ring is acceptable because the ring remains visible; removing the

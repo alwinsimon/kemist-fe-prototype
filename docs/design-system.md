@@ -14,7 +14,9 @@
 > salt level, and schedule tags attach per-salt (§7, "Composition display"). **Amendment:** schedule
 > classification is a resolved rule (`salt_schedule_rule`), not a flat flag, per `docs/salt-model.md`
 > V4 — added the `UNSPECIFIED` marker (nobody has classified this yet, distinct from `NONE`) and the
-> shop-override marker (§7).
+> shop-override marker (§7). **Amendment:** §5 names `MM-YY` as the compact date variant and states
+> the display/storage split explicitly — ISO in the data layer always, `DD-MM-YYYY` only ever a
+> rendering step through `src/lib/format.ts`.
 
 ---
 
@@ -265,7 +267,12 @@ grid.
 **Money:** `₹` with Indian digit grouping — `₹1,23,456.78`, never `₹123,456.78`. Two decimals always.
 Use `Intl.NumberFormat('en-IN', …)`; do not hand-roll grouping.
 
-**Dates:** `DD-MM-YYYY`. Expiry as `MM-YYYY`.
+**Dates:** `DD-MM-YYYY` for a full date. Expiry as `MM-YYYY`. `MM-YY` is the compact variant where space
+is genuinely tight (e.g. a narrow batch-picker column) — same day-month-year order, two-digit year.
+**No other date ordering appears anywhere in the UI, in exports, or on a printed bill** — not
+`MM-DD-YYYY`, not `YYYY-MM-DD`. This is a display rule only: storage stays ISO (`YYYY-MM-DD`,
+`YYYY-MM` for expiry) — see `src/lib/format.ts`'s `formatDate`/`formatExpiry`/`formatExpiryShort`,
+which are the only place the conversion happens. No component formats a date inline.
 
 **Alignment:** numbers right, text left. Never centre a number.
 
