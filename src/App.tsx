@@ -12,7 +12,7 @@ const baseTokens: Swatch[] = [
   { name: "--card-foreground", hex: "#1c1c1a" },
   { name: "--popover", hex: "#ffffff" },
   { name: "--popover-foreground", hex: "#1c1c1a" },
-  { name: "--primary", hex: "#2456e6" },
+  { name: "--primary", hex: "#127a4a" },
   { name: "--primary-foreground", hex: "#ffffff" },
   { name: "--secondary", hex: "#f4f4f3" },
   { name: "--secondary-foreground", hex: "#1c1c1a" },
@@ -29,34 +29,46 @@ const baseTokens: Swatch[] = [
 
 const sidebarTokens: Swatch[] = [
   { name: "--sidebar", hex: "→ k-surface #ffffff" },
-  { name: "--sidebar-foreground", hex: "→ foreground #1c1c1a" },
-  { name: "--sidebar-primary", hex: "→ k-brand #2456e6" },
+  { name: "--sidebar-foreground", hex: "→ k-ink #1c1c1a" },
+  { name: "--sidebar-primary", hex: "→ k-brand #127a4a" },
   { name: "--sidebar-primary-foreground", hex: "→ k-surface #ffffff" },
   { name: "--sidebar-accent", hex: "→ k-surface-2 #f4f4f3" },
-  { name: "--sidebar-accent-foreground", hex: "→ foreground #1c1c1a" },
-  { name: "--sidebar-border", hex: "→ border #e4e4e2" },
+  { name: "--sidebar-accent-foreground", hex: "→ k-ink #1c1c1a" },
+  { name: "--sidebar-border", hex: "→ k-border #e4e4e2" },
   { name: "--sidebar-ring", hex: "→ ring #2456e6" },
 ]
 
-const kemistTokens: Swatch[] = [
-  { name: "--k-brand", hex: "#2456e6" },
-  { name: "--k-brand-hover", hex: "#1b44bf" },
-  { name: "--k-surface", hex: "#ffffff" },
-  { name: "--k-surface-2", hex: "#f4f4f3" },
+const brandTokens: Swatch[] = [
+  { name: "--k-brand", hex: "#127a4a" },
+  { name: "--k-brand-hover", hex: "#0d6039" },
+  { name: "--k-brand-bg", hex: "#eff7f2" },
+  { name: "--k-brand-line", hex: "#cbe6d8" },
+]
+
+const interactiveTokens: Swatch[] = [
+  { name: "--k-interactive", hex: "#2456e6" },
+  { name: "--k-interactive-hover", hex: "#1b44bf" },
+  { name: "--k-interactive-bg", hex: "#f2f5fe" },
+]
+
+const stateTokens: Swatch[] = [
   { name: "--k-pos", hex: "#178a50" },
   { name: "--k-pos-bg", hex: "#e9f6ef" },
   { name: "--k-warn", hex: "#b96a00" },
-  { name: "--k-warn-bg", hex: "#fcf3e3" },
+  { name: "--k-warn-700", hex: "#8a5000" },
+  { name: "--k-warn-50", hex: "#fdf8ee" },
+  { name: "--k-warn-100", hex: "#fbf0dc" },
+  { name: "--k-warn-200", hex: "#f7e4be" },
   { name: "--k-neg", hex: "#c6222f" },
   { name: "--k-neg-bg", hex: "#fcebec" },
 ]
 
 const chartTokens: Swatch[] = [
-  { name: "--chart-1", hex: "#2456e6" },
-  { name: "--chart-2", hex: "#5b82ee" },
-  { name: "--chart-3", hex: "#92aef5" },
-  { name: "--chart-4", hex: "#c0d0f9" },
-  { name: "--chart-5", hex: "#e0e9fc" },
+  { name: "--chart-1", hex: "#127a4a · sales" },
+  { name: "--chart-2", hex: "#2456e6 · purchases" },
+  { name: "--chart-3", hex: "#c6222f · returns" },
+  { name: "--chart-4", hex: "#b96a00 · pending" },
+  { name: "--chart-5", hex: "#5b82ee · categorical" },
 ]
 
 const typeScale = [
@@ -64,7 +76,7 @@ const typeScale = [
   { label: "h1", px: 20, weight: 600 },
   { label: "h2", px: 16, weight: 600 },
   { label: "body", px: 14, weight: 400 },
-  { label: "grid cell", px: 13, weight: 400 },
+  { label: "grid cell", px: 14, weight: 400 },
   { label: "caption", px: 12, weight: 400 },
   { label: "hotkey chip", px: 11, weight: 500, uppercase: true },
 ]
@@ -77,6 +89,14 @@ const buttonVariants = [
   "destructive",
   "link",
 ] as const
+
+const expiryRows = [
+  { name: "Amoxicillin 500mg", batch: "B-1187", rowClass: "k-row-expired", badgeClass: "k-expiry-badge--expired", badge: "−12d", label: "Expired" },
+  { name: "Ibuprofen 400mg", batch: "B-2450", rowClass: "k-row-expiry-30", badgeClass: "k-expiry-badge--30", badge: "19d", label: "≤30 days" },
+  { name: "Azithromycin 500mg", batch: "B-3312", rowClass: "k-row-expiry-60", badgeClass: "k-expiry-badge--60", badge: "52d", label: "31–60 days" },
+  { name: "Cetirizine 10mg", batch: "B-4409", rowClass: "k-row-expiry-90", badgeClass: "k-expiry-badge--90", badge: "88d", label: "61–90 days" },
+  { name: "Paracetamol 650mg", batch: "B-5501", rowClass: "", badgeClass: "", badge: "", label: ">90 days — no tint, no badge" },
+]
 
 function SwatchGrid({ items }: { items: Swatch[] }) {
   return (
@@ -126,19 +146,27 @@ function App() {
         Kemist token proof — throwaway, delete after review
       </h1>
 
-      <Section title="Base / shadcn contract">
+      <Section title="Base / shadcn contract (primary is now brand green)">
         <SwatchGrid items={baseTokens} />
       </Section>
 
-      <Section title="Sidebar / menu (menuColor / menuAccent)">
+      <Section title="Sidebar / menu (active nav now brand green)">
         <SwatchGrid items={sidebarTokens} />
       </Section>
 
-      <Section title="Kemist semantic state">
-        <SwatchGrid items={kemistTokens} />
+      <Section title="Brand (identity + primary action)">
+        <SwatchGrid items={brandTokens} />
       </Section>
 
-      <Section title="Charts (single hue, tints only)">
+      <Section title="Interactive (where you are — unchanged, still blue)">
+        <SwatchGrid items={interactiveTokens} />
+      </Section>
+
+      <Section title="State — success (transient only) / caution (banded) / stop">
+        <SwatchGrid items={stateTokens} />
+      </Section>
+
+      <Section title="Charts (semantic — sales/purchases/returns/pending/categorical)">
         <SwatchGrid items={chartTokens} />
       </Section>
 
@@ -164,19 +192,14 @@ function App() {
         </div>
       </Section>
 
-      <Section title="Grid rows — 32px working vs 40px admin">
+      <Section title="Grid rows — 32px working (14px text) vs 40px admin">
         <div className="flex flex-col border border-border">
           {["Paracetamol 650mg", "Azithromycin 500mg", "Cetirizine 10mg"].map(
             (name) => (
-              <div
-                key={name}
-                className="k-grid-row flex items-center gap-4 px-3"
-              >
-                <span className="flex-1 text-[13px]">{name}</span>
-                <span className="num flex-1 font-mono text-[13px]">
-                  B-2291
-                </span>
-                <span className="num flex-1 text-[13px]">₹142.00</span>
+              <div key={name} className="k-grid-row flex items-center gap-4 px-3">
+                <span className="flex-1">{name}</span>
+                <span className="num flex-1 font-mono">B-2291</span>
+                <span className="num flex-1">₹142.00</span>
               </div>
             )
           )}
@@ -195,7 +218,7 @@ function App() {
         </div>
       </Section>
 
-      <Section title="Buttons — every variant">
+      <Section title="Buttons — every variant (default is now brand green)">
         <div className="flex flex-wrap items-center gap-3">
           {buttonVariants.map((v) => (
             <Button key={v} variant={v}>
@@ -211,25 +234,27 @@ function App() {
         </span>
       </Section>
 
-      <Section title="Expiry — expired row vs near-expiry cell">
+      <Section title="Expiry — the banded system, all four bands plus the plain case">
         <div className="flex flex-col border border-border">
-          <div className="k-row-expired flex items-center gap-4 px-3" style={{ height: "var(--k-row)" }}>
-            <span className="flex-1 text-[13px]">Amoxicillin 500mg</span>
-            <span className="num flex-1 font-mono text-[13px]">B-1187</span>
-            <span className="flex flex-1 items-center justify-end gap-2">
-              <span className="num text-neg text-[13px]">05-03-2025</span>
-              <span className="rounded-sm bg-neg px-1.5 py-0.5 text-[12px] font-semibold uppercase text-white">
-                Expired
+          {expiryRows.map((r) => (
+            <div
+              key={r.batch}
+              className={`k-grid-row flex items-center gap-4 px-3 ${r.rowClass}`}
+            >
+              <span className="flex-1">{r.name}</span>
+              <span className="num flex-1 font-mono">{r.batch}</span>
+              <span className="flex flex-1 items-center justify-end gap-2">
+                <span className="text-[12px] text-muted-foreground">
+                  {r.label}
+                </span>
+                {r.badge && (
+                  <span className={`k-expiry-badge ${r.badgeClass}`}>
+                    {r.badge}
+                  </span>
+                )}
               </span>
-            </span>
-          </div>
-          <div className="k-grid-row flex items-center gap-4 px-3">
-            <span className="flex-1 text-[13px]">Ibuprofen 400mg</span>
-            <span className="num flex-1 font-mono text-[13px]">B-2450</span>
-            <span className="k-cell-near-expiry num flex-1 text-[13px]">
-              14-10-2026
-            </span>
-          </div>
+            </div>
+          ))}
         </div>
       </Section>
     </div>

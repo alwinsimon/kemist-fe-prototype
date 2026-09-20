@@ -21,9 +21,23 @@ src/api/client.ts       reads from mocks now; reads from the node later
 
 ## Read before any UI work
 
-`DESIGN.md` at the repo root is the binding visual and interaction contract. Read it before
-generating, editing or reviewing any component. Where your instinct and `DESIGN.md` disagree,
-`DESIGN.md` wins. Do not restyle anything "to look better".
+The repo-root `DESIGN.md` is retired — `docs/design-system.md` replaces it. Four docs in `docs/` are
+the binding contract, in precedence order (conflicts resolve upward, never silently chosen). Each
+document carries its own version in its header, not in the filename, so these paths stay stable
+across revisions:
+
+1. `docs/brand-identity.md` — colour values, logo, typefaces, voice, vocabulary
+2. `docs/design-system.md` — layout, density, spacing, component design, state expression, motion,
+   accessibility, the review gate (§13)
+3. `docs/frontend-standards.md` — code structure, performance
+4. `docs/screen-specs.md` — per-screen specs
+
+Read the relevant ones before generating, editing or reviewing any component. Where your instinct
+and a doc disagree, the doc wins. Do not restyle anything "to look better".
+
+Separately, `docs/BEHAVIOUR-SPEC.md` remains the authority on billing-screen *behaviour* (state
+machine, quantity math, search ranking) — it governs logic, not visual design, and isn't one of the
+four above.
 
 ## Stack
 
@@ -54,14 +68,21 @@ These come from the engineering invariants. Violating one blocks the change.
 10. **Money-touching mutations are pessimistic.** Await confirmation before showing a bill as saved
     or triggering a print.
 
-## Design non-negotiables (summary — full detail in DESIGN.md)
+## Design non-negotiables (summary — full detail in `docs/design-system.md`)
 
 - Design at 1366×768. Not responsive to mobile. Single-column stacking is a defect.
-- Colour is information. Red = expired/error/stock-out/void. Amber = near-expiry/pending-sync.
-  Green = success/synced/in-stock. Never colour alone — always pair with icon or text tag.
+- **Green (`#127A4A`) is the brand colour — logo, primary action, active nav.** Blue (`#2456E6`) is
+  interaction only: focus ring, selected/picking row, links. The two never swap jobs. Amber =
+  near-expiry/pending-sync. Red = expired/error/stock-out/void. "In stock"/"synced" render in
+  neutral ink with no colour at all — normal state needs no colour, only exceptions do. Never colour
+  alone — always pair with icon or text tag.
+- **Expiry is a four-band row tint plus a days badge**, not a cell-only tint: 61–90d / 31–60d / ≤30d
+  each get a progressively darker amber row tint and a badge (`88d`, `52d`, `19d`); expired gets the
+  red row tint and a badge (`−12d`); >90 days gets no tint and no badge. The whole row is tinted, not
+  just the expiry cell.
 - **The offline chip is muted grey, never red.** Offline is normal operation for this product.
 - `font-variant-numeric: tabular-nums` on every number. Indian grouping: `₹1,23,456.78`.
-- Working grids: 32px rows, 13px text. Admin: 40px rows.
+- Working grids: 32px rows, 14px text. Admin: 40px rows.
 - Focus ring always visible. The focus indicator is never suppressed. shadcn's `outline-none`
   paired with a `focus-visible` ring is acceptable because the ring remains visible; removing the
   outline with no replacement is not.
@@ -104,7 +125,8 @@ this product does not have, and shipping them would be a lie about how fast the 
 
 - Propose a plan and get it approved before writing code for any new screen.
 - One screen per session. Commit after each accepted screen.
-- After any UI change, run the review gate in `docs/review-gate.md` and report PASS/FAIL per item.
+- After any UI change, run the review gate in `docs/design-system.md` §13 and report PASS/FAIL per
+  item.
 - When something conflicts with a rule above, stop and say so. Do not silently pick a side.
 
 ## Commands

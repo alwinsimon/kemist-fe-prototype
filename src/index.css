@@ -3,94 +3,116 @@
 /* ============================================================================
    Kemist token layer
    ----------------------------------------------------------------------------
-   Two groups of variables live here:
+   Source of truth: docs/design-system.md §3.2 (token layer) and §3.3 (shadcn
+   contract mapping). Both blocks below are copied verbatim from that
+   document — do not hand-edit a value here without updating the doc first,
+   and vice versa.
 
-   1. The shadcn/ui contract (--background, --primary, --border …). shadcn
-      components read these. Do not rename them or components break.
-   2. The Kemist semantic state layer (--k-pos, --k-warn, --k-neg …). These carry
-      meaning specific to this product: stock status, expiry, sync.
+   Brand is green (--k-brand, #127A4A). Blue (--k-interactive) is interaction
+   only — focus ring, selected/picking state, links. The two never swap jobs;
+   see docs/brand-identity.md §3.3.
 
-   NAME COLLISION — READ THIS
-   In the Kemist design system "accent" means the brand blue #2456E6.
-   In shadcn/ui "--accent" means a neutral hover/highlight surface.
-   They are NOT the same thing. The brand blue is mapped to --primary and --ring
-   below; --accent stays neutral so shadcn hover states behave correctly.
-   Never write the brand blue into --accent.
+   THE --accent TRAP (Design System §3.3): in shadcn "--accent" means a
+   neutral hover surface, not a brand colour. Putting brand green into
+   --accent would turn every hover state in the app brand-coloured. Never do
+   that — --accent stays mapped to --k-surface-2 below.
 
-   Dark theme is deferred. Everything is a CSS variable so adding it later is a
-   second :root block and no component changes.
+   Dark theme is deferred. Everything is a custom property so adding it later
+   is one additional :root block and zero component changes.
    ========================================================================== */
 
+/* ---- Token layer — Design System §3.2, copied verbatim ---- */
 :root {
-  --radius: 0.375rem; /* 6px controls */
+  /* ---- Brand (identity + primary action) ---- */
+  --k-brand:            #127A4A;
+  --k-brand-hover:      #0D6039;
+  --k-brand-bg:         #EFF7F2;
+  --k-brand-line:       #CBE6D8;
 
-  /* ---- shadcn/ui contract ---- */
-  --background: #fafaf9;
-  --foreground: #1c1c1a;
+  /* ---- Interaction (where you are) ---- */
+  --k-interactive:      #2456E6;
+  --k-interactive-hover:#1B44BF;
+  --k-interactive-bg:   #F2F5FE;
 
-  --card: #ffffff;
-  --card-foreground: #1c1c1a;
-  --popover: #ffffff;
-  --popover-foreground: #1c1c1a;
+  /* ---- Neutral chrome ---- */
+  --k-bg:               #FAFAF9;
+  --k-surface:          #FFFFFF;
+  --k-surface-2:        #F4F4F3;
+  --k-border:           #E4E4E2;
+  --k-ink:              #1C1C1A;
+  --k-ink-muted:        #6E6E6A;
 
-  --primary: #2456e6;          /* Kemist brand blue — the only brand colour */
-  --primary-foreground: #ffffff;
+  /* ---- State: transient success ONLY (see Brand Identity §3.3) ---- */
+  --k-pos:              #178A50;
+  --k-pos-bg:           #E9F6EF;
 
-  --secondary: #f4f4f3;
-  --secondary-foreground: #1c1c1a;
+  /* ---- State: caution, banded for expiry ---- */
+  --k-warn:             #B96A00;   /* amber ink on the 50/100 tints */
+  --k-warn-700:         #8A5000;   /* amber ink on the 200 tint — contrast */
+  --k-warn-50:          #FDF8EE;   /* 61–90 days */
+  --k-warn-100:         #FBF0DC;   /* 31–60 days */
+  --k-warn-200:         #F7E4BE;   /* ≤30 days   */
 
-  --muted: #f4f4f3;
-  --muted-foreground: #6e6e6a;
-
-  --accent: #f4f4f3;           /* neutral hover surface — NOT the brand colour */
-  --accent-foreground: #1c1c1a;
-
-  --destructive: #c6222f;
-  --destructive-foreground: #ffffff;
-
-  --border: #e4e4e2;
-  --input: #e4e4e2;
-  --ring: #2456e6;
-
-  /* Sidebar/menu contract (drives components.json menuColor/menuAccent).
-     Mapped to Kemist tokens, not shadcn defaults — the active item is
-     shown by brand-blue TEXT plus a 2px left bar, never a filled pill. */
-  --sidebar: var(--k-surface);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--k-brand);
-  --sidebar-primary-foreground: var(--k-surface);
-  --sidebar-accent: var(--k-surface-2);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
-
-  /* Charts: single hue, no rainbow. Extra stops are tints of the same blue. */
-  --chart-1: #2456e6;
-  --chart-2: #5b82ee;
-  --chart-3: #92aef5;
-  --chart-4: #c0d0f9;
-  --chart-5: #e0e9fc;
-
-  /* ---- Kemist semantic state layer ---- */
-  --k-brand: #2456e6;
-  --k-brand-hover: #1b44bf;
-
-  --k-surface: #ffffff;
-  --k-surface-2: #f4f4f3;      /* zebra rows, wells, hint bar */
-
-  --k-pos: #178a50;            /* success · synced · in stock */
-  --k-pos-bg: #e9f6ef;
-  --k-warn: #b96a00;           /* near expiry · pending sync · caution */
-  --k-warn-bg: #fcf3e3;
-  --k-neg: #c6222f;            /* expired · error · stock out · void */
-  --k-neg-bg: #fcebec;
+  /* ---- State: stop ---- */
+  --k-neg:              #C6222F;
+  --k-neg-bg:           #FCEBEC;   /* expired row tint */
 
   /* ---- Layout constants ---- */
-  --k-row: 32px;               /* working grids: billing, stock, purchases */
-  --k-row-admin: 40px;         /* settings, users, lists */
-  --k-topbar: 44px;
-  --k-hintbar: 28px;
-  --k-nav: 200px;
+  --k-row:              32px;      /* working grids */
+  --k-row-admin:        40px;      /* admin lists */
+  --k-topbar:           44px;
+  --k-hintbar:          28px;
+  --k-nav:              200px;
+  --radius:             0.375rem;  /* 6px */
+}
+
+/* ---- shadcn contract mapping — Design System §3.3, copied verbatim ---- */
+:root {
+  --background: var(--k-bg);
+  --foreground: var(--k-ink);
+  --card: var(--k-surface);
+  --card-foreground: var(--k-ink);
+  --popover: var(--k-surface);
+  --popover-foreground: var(--k-ink);
+
+  --primary: var(--k-brand);              /* green — the action */
+  --primary-foreground: var(--k-surface);
+
+  --secondary: var(--k-surface-2);
+  --secondary-foreground: var(--k-ink);
+  --muted: var(--k-surface-2);
+  --muted-foreground: var(--k-ink-muted);
+
+  --accent: var(--k-surface-2);           /* shadcn's --accent is a NEUTRAL
+                                             hover surface, not brand. Never
+                                             put a brand colour here. */
+  --accent-foreground: var(--k-ink);
+
+  --destructive: var(--k-neg);
+  --destructive-foreground: var(--k-surface);
+
+  --border: var(--k-border);
+  --input: var(--k-border);
+  --ring: var(--k-interactive);           /* focus stays blue */
+
+  --sidebar: var(--k-surface);
+  --sidebar-foreground: var(--k-ink);
+  --sidebar-primary: var(--k-brand);      /* active nav TEXT and left bar,
+                                             never a filled pill */
+  --sidebar-primary-foreground: var(--k-surface);
+  --sidebar-accent: var(--k-surface-2);
+  --sidebar-accent-foreground: var(--k-ink);
+  --sidebar-border: var(--k-border);
+  --sidebar-ring: var(--ring);
+}
+
+/* ---- Charts — Design System §8. Semantic when series carry meaning. ---- */
+:root {
+  --chart-1: #127A4A; /* sales, positive flow */
+  --chart-2: #2456E6; /* purchases, neutral flow */
+  --chart-3: #C6222F; /* returns, loss */
+  --chart-4: #B96A00; /* pending, at risk */
+  --chart-5: #5B82EE; /* blue tint — categorical ramp */
 }
 
 @theme inline {
@@ -129,15 +151,23 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  /* Kemist semantic utilities: text-pos, bg-warn-bg, border-neg … */
+  /* Kemist semantic utilities: bg-brand, text-pos, bg-warn-100 … */
   --color-brand: var(--k-brand);
   --color-brand-hover: var(--k-brand-hover);
+  --color-brand-bg: var(--k-brand-bg);
+  --color-brand-line: var(--k-brand-line);
+  --color-interactive: var(--k-interactive);
+  --color-interactive-hover: var(--k-interactive-hover);
+  --color-interactive-bg: var(--k-interactive-bg);
   --color-surface: var(--k-surface);
   --color-surface-2: var(--k-surface-2);
   --color-pos: var(--k-pos);
   --color-pos-bg: var(--k-pos-bg);
   --color-warn: var(--k-warn);
-  --color-warn-bg: var(--k-warn-bg);
+  --color-warn-700: var(--k-warn-700);
+  --color-warn-50: var(--k-warn-50);
+  --color-warn-100: var(--k-warn-100);
+  --color-warn-200: var(--k-warn-200);
   --color-neg: var(--k-neg);
   --color-neg-bg: var(--k-neg-bg);
 
@@ -146,11 +176,11 @@
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
-  /* --radius-xl/2xl/3xl/4xl are deliberately NOT defined. DESIGN.md allows
-     exactly two radii (6px controls, 8px cards); rounded-2xl/3xl are banned
-     outright. Leaving these undefined means a stray rounded-2xl/3xl class
-     renders unrounded and fails review, instead of silently working. Do not
-     add them back. */
+  /* --radius-xl/2xl/3xl/4xl are deliberately NOT defined (Design System §6):
+     the system has exactly two radii (6px controls, 8px cards) and
+     rounded-2xl/3xl are banned outright. Leaving these undefined means a
+     stray rounded-2xl/3xl class renders square and fails review, instead of
+     silently working. Do not add them back. */
 
   --spacing-row: var(--k-row);
   --spacing-rowadmin: var(--k-row-admin);
@@ -173,8 +203,10 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* The focus ring is a navigation instrument, not a style choice.
-     Never override this with outline:none anywhere in the codebase. */
+  /* The focus indicator is never suppressed (Design System §11). shadcn's
+     outline-none paired with a visible focus-visible ring is acceptable
+     because the ring remains; removing the outline with no replacement is
+     not. */
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
@@ -197,29 +229,59 @@
 }
 
 @layer components {
-  /* Working-grid row. Density is the point: 32px, 13px text, zebra, 1px rules. */
+  /* Working-grid row (Design System §6): 32px, 14px text — raised from 13px
+     for legibility on washed-out panels — zebra, 1px rules. */
   .k-grid-row {
     height: var(--k-row);
-    font-size: 13px;
+    font-size: 14px;
     border-bottom: 1px solid var(--border);
   }
   .k-grid-row:nth-child(even) {
     background-color: var(--k-surface-2);
   }
 
-  /* Focused row must be findable from one metre. */
+  /* Focused row must be findable from one metre (Design System §7: Grid row). */
   .k-grid-row[data-focused="true"] {
-    background-color: color-mix(in srgb, var(--k-brand) 6%, transparent);
-    box-shadow: inset 2px 0 0 0 var(--k-brand);
+    background-color: color-mix(in srgb, var(--k-interactive) 6%, transparent);
+    box-shadow: inset 2px 0 0 0 var(--k-interactive);
   }
 
-  /* Expired row: tint the whole row. Near-expiry: tint the expiry CELL only. */
+  /* Expiry — the banded system (Design System §4). The whole row is tinted,
+     not just the expiry cell; this supersedes the earlier cell-only rule. */
+  .k-row-expiry-90 {
+    background-color: var(--k-warn-50);
+  }
+  .k-row-expiry-60 {
+    background-color: var(--k-warn-100);
+  }
+  .k-row-expiry-30 {
+    background-color: var(--k-warn-200);
+  }
   .k-row-expired {
     background-color: var(--k-neg-bg);
   }
-  .k-cell-near-expiry {
-    background-color: var(--k-warn-bg);
+
+  /* Expiry days badge (Design System §4). Always present when a band
+     applies; ink colour is set per band via a modifier class. */
+  .k-expiry-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid currentColor;
+    text-align: right;
+  }
+  .k-expiry-badge--90,
+  .k-expiry-badge--60 {
     color: var(--k-warn);
+  }
+  .k-expiry-badge--30 {
+    color: var(--k-warn-700);
+  }
+  .k-expiry-badge--expired {
+    color: var(--k-neg);
   }
 
   /* Hotkey chip — 11px uppercase, right-aligned inside buttons. */
