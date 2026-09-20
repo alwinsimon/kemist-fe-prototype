@@ -55,12 +55,12 @@ const stateTokens: Swatch[] = [
   { name: "--k-pos", hex: "#178a50" },
   { name: "--k-pos-bg", hex: "#e9f6ef" },
   { name: "--k-warn", hex: "#b96a00" },
-  { name: "--k-warn-700", hex: "#8a5000" },
-  { name: "--k-warn-50", hex: "#fdf8ee" },
-  { name: "--k-warn-100", hex: "#fbf0dc" },
-  { name: "--k-warn-200", hex: "#f7e4be" },
+  { name: "--k-warn-700", hex: "#7a4600" },
+  { name: "--k-warn-50", hex: "#fdf4e3" },
+  { name: "--k-warn-100", hex: "#f9e7c0" },
+  { name: "--k-warn-200", hex: "#f2d394" },
   { name: "--k-neg", hex: "#c6222f" },
-  { name: "--k-neg-bg", hex: "#fcebec" },
+  { name: "--k-neg-bg", hex: "#fbdcde" },
 ]
 
 const chartTokens: Swatch[] = [
@@ -215,6 +215,39 @@ function App() {
               <span className="flex-1 text-muted-foreground">Active</span>
             </div>
           ))}
+        </div>
+      </Section>
+
+      <Section title="Search/picker result row — 44px, two-line, all eleven mandatory fields">
+        {/* Illustrative literal values, not imported from src/mocks/seed.ts —
+            this page is a diagnostic scratch page, not a feature route, and
+            "nothing outside src/api/client.ts may import from mocks" (CLAUDE.md
+            "The seam"). Field values below match the real Pan-D seed entry. */}
+        <div className="flex flex-col border border-border">
+          <div className="k-search-row k-row-expiry-90">
+            <div className="k-search-row-line1">
+              <span className="flex items-baseline gap-1.5 overflow-hidden">
+                <span className="font-semibold">Pan-D</span>
+                <span className="truncate text-muted-foreground">
+                  <span className="uppercase">Pantoprazole + Domperidone</span>{" "}
+                  40 mg + 30 mg Capsule
+                </span>
+              </span>
+              <span className="flex shrink-0 items-baseline gap-3">
+                <span className="num">8 on hand</span>
+                <span className="num font-medium">₹212.00</span>
+              </span>
+            </div>
+            <div className="k-search-row-line2">
+              <span className="truncate">
+                Alkem · PD7781 · 11-2026 · Rack B1
+              </span>
+              <span className="flex shrink-0 items-center gap-2">
+                <span className="num">PTR ₹182.76</span>
+                <span className="k-expiry-badge k-expiry-badge--90">71d</span>
+              </span>
+            </div>
+          </div>
         </div>
       </Section>
 

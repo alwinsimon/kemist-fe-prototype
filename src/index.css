@@ -48,14 +48,14 @@
 
   /* ---- State: caution, banded for expiry ---- */
   --k-warn:             #B96A00;   /* amber ink on the 50/100 tints */
-  --k-warn-700:         #8A5000;   /* amber ink on the 200 tint — contrast */
-  --k-warn-50:          #FDF8EE;   /* 61–90 days */
-  --k-warn-100:         #FBF0DC;   /* 31–60 days */
-  --k-warn-200:         #F7E4BE;   /* ≤30 days   */
+  --k-warn-700:         #7A4600;   /* amber ink on the 200 tint — contrast */
+  --k-warn-50:          #FDF4E3;   /* 61–90 days */
+  --k-warn-100:         #F9E7C0;   /* 31–60 days */
+  --k-warn-200:         #F2D394;   /* ≤30 days   */
 
   /* ---- State: stop ---- */
   --k-neg:              #C6222F;
-  --k-neg-bg:           #FCEBEC;   /* expired row tint */
+  --k-neg-bg:           #FBDCDE;   /* expired row tint */
 
   /* ---- Layout constants ---- */
   --k-row:              32px;      /* working grids */
@@ -229,6 +229,34 @@
 }
 
 @layer components {
+  /* Search/picker result row (Design System §7): 44px, two-line — NOT the
+     32px working-grid row. Product search results and the batch popover
+     only; every working grid stays .k-grid-row. */
+  .k-search-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    height: 44px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .k-search-row-line1 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+  }
+  .k-search-row-line2 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted-foreground);
+  }
+
   /* Working-grid row (Design System §6): 32px, 14px text — raised from 13px
      for legibility on washed-out panels — zebra, 1px rules. */
   .k-grid-row {

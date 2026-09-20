@@ -3,6 +3,10 @@
 > **What changed in v1:** First issue. Specifies the global shell and the first two modules in build
 > order. Billing is specified to the level of the keyboard state machine because it is the only screen
 > where "looks right" and "is right" come apart.
+>
+> **Amendment:** State A (product search open) now specifies the mandatory eleven-field, two-line,
+> 44px result row (Design System §7) in place of the earlier five-field 32px row. Seed data (§4) now
+> carries all eleven fields per product.
 
 ---
 
@@ -221,11 +225,21 @@ Mode is **derived** from state, never stored.
 
 Each is a distinct visual state of the same screen, not a separate page.
 
-**A — Product search open.** Results drop below the field, max 8 visible, 32px rows, virtualised. Each
-row: brand 14px · molecule and strength muted · manufacturer · in-stock qty right · MRP tabular. First
-row selected. A second group headed `Same composition` lists alternatives; out-of-stock items show
-`Nil` in red and sort last. Caption: `↑↓ select   ⏎ add   Tab batch   Esc close`. **No spinner, no
-"Searching…", no shimmer.**
+**A — Product search open.** Results drop below the field, **six visible**, **44px two-line rows**
+(Design System §7, "Search/picker result row"), virtualised beyond six. Every result shows all eleven
+mandatory fields without exception — Name, CONTENT (salt), Dose, Dosage Form, Manufacturer, Batch,
+Expiry, Current Stock, Rack, MRP, Price (PTR):
+
+```
+Line 1 (14px)        Name (600) · CONTENT dose FORM              stock · MRP
+Line 2 (12px muted)  Manufacturer · Batch · Expiry · Rack         PTR · expiry badge
+```
+
+Batch and Expiry shown are the FEFO batch that Enter would select — a preview, not the picker; `F2`
+(global, per the hint bar) opens the batch popover (state B) to override. First row selected. A
+second group headed `Same composition` lists alternatives; out-of-stock items show `Nil` in red and
+sort last. Caption: `↑↓ select   ⏎ add   Tab batch   Esc close`. **No spinner, no "Searching…", no
+shimmer.**
 
 **B — Batch picker.** Popover anchored to the line, 320px, not a centre modal. Rows: Batch · Expiry ·
 Qty · MRP, with expiry banding applied per row. FEFO batch preselected and tagged. Caption:

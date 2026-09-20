@@ -1,10 +1,15 @@
 # Kemist — Design System — V1
 
 > **What changed in v1:** First issue. Supersedes the repo-root `DESIGN.md`, which should be deleted and
-> replaced by this document at `docs/kemist-design-system.md`. Three changes from earlier working drafts,
+> replaced by this document at `docs/design-system.md`. Three changes from earlier working drafts,
 > all deliberate: (1) brand is green `#127A4A`, blue is interaction-only — the claim that blue was the
 > only brand colour is withdrawn; (2) near-expiry is now a four-band row tint **plus** a days badge,
 > superseding the cell-only rule; (3) working-grid text is 14px, up from 13px, with row heights unchanged.
+>
+> **Amendment:** the four expiry-band tints and `--k-warn-700` were widened/darkened (see §3.2 and the
+> contrast note in §4) for better visibility against the row background. **Amendment:** search/picker
+> result rows are now specified as a two-line, 44px, eleven-field row (§7, "Search/picker result row"),
+> distinct from the 32px single-line working-grid row — see §6 and §13 item 6.
 
 ---
 
@@ -101,14 +106,14 @@ This is the canonical set. Copy it verbatim into `src/index.css`.
 
   /* ---- State: caution, banded for expiry ---- */
   --k-warn:             #B96A00;   /* amber ink on the 50/100 tints */
-  --k-warn-700:         #8A5000;   /* amber ink on the 200 tint — contrast */
-  --k-warn-50:          #FDF8EE;   /* 61–90 days */
-  --k-warn-100:         #FBF0DC;   /* 31–60 days */
-  --k-warn-200:         #F7E4BE;   /* ≤30 days   */
+  --k-warn-700:         #7A4600;   /* amber ink on the 200 tint — contrast */
+  --k-warn-50:          #FDF4E3;   /* 61–90 days */
+  --k-warn-100:         #F9E7C0;   /* 31–60 days */
+  --k-warn-200:         #F2D394;   /* ≤30 days   */
 
   /* ---- State: stop ---- */
   --k-neg:              #C6222F;
-  --k-neg-bg:           #FCEBEC;   /* expired row tint */
+  --k-neg-bg:           #FBDCDE;   /* expired row tint */
 
   /* ---- Layout constants ---- */
   --k-row:              32px;      /* working grids */
@@ -210,6 +215,25 @@ background in the band tint. Always present when a band applies. Never colour-on
 }
 ```
 
+**Verified contrast (WCAG relative-luminance formula, computed, not estimated).** The row-tint /
+row-text pairing (`--k-ink` on all four tints) is comfortably AA at every band, 11.8:1–15.6:1. The
+**badge ink on its own tint is not all clear at the badge's actual 11px size** — WCAG's 3:1 "large
+text" allowance does not apply below 18px, so 4.5:1 is the real bar:
+
+| Pairing | Ratio | 4.5:1 (11px)? |
+|---|---|---|
+| `--k-ink` on `--k-warn-50` | 15.63:1 | Pass |
+| `--k-ink` on `--k-warn-100` | 14.00:1 | Pass |
+| `--k-ink` on `--k-warn-200` | 11.80:1 | Pass |
+| `--k-ink` on `--k-neg-bg` | 13.32:1 | Pass |
+| `--k-warn` badge on `--k-warn-50` | 3.75:1 | **Fail** |
+| `--k-warn` badge on `--k-warn-100` | 3.36:1 | **Fail** |
+| `--k-warn-700` badge on `--k-warn-200` | 5.37:1 | Pass |
+| `--k-neg` badge on `--k-neg-bg` | 4.47:1 | **Fail** (0.03 short) |
+
+Three badge/tint pairings fail AA at 11px: the 61–90d and 31–60d amber badges, and the expired red
+badge. Flagged, not silently adjusted — a token change here is a colour decision, not a layout one.
+
 ---
 
 ## 5. Typography
@@ -250,6 +274,7 @@ Use `Intl.NumberFormat('en-IN', …)`; do not hand-roll grouping.
 |---|---|---|---|
 | Working grid row | 32px | 14px | Billing, stock, purchases, day book, expiry |
 | Admin list row | 40px | 14px | Settings, users, devices, held bills |
+| Search/picker result row | 44px, two-line | 14px / 12px | Product search results, batch picker — see §7 |
 | Top bar | 44px | 13px | Every screen |
 | Hint bar | 28px | 11px | Every screen, pinned bottom |
 | Left nav | 200px wide, 40px rows | 13px | Every screen |
@@ -269,6 +294,37 @@ read as decoration and cost rendering time.
 32px, 14px text, 1px bottom border, zebra using `--k-surface-2` on even rows. Focused row: background
 tinted `--k-interactive` at 6%, plus a 2px left bar in `--k-interactive`. The focused row must be
 identifiable from one metre.
+
+### Search/picker result row
+
+44px, two-line — **not** the 32px single-line working-grid row. This applies to product search
+results and the batch popover only; billing's line grid and every other working grid stay 32px
+single-line.
+
+**Why two lines at 44px:** the mandatory drug field set is Name, CONTENT (salt), Dose, Dosage Form,
+Manufacturer, Batch, Expiry, Current Stock, Rack, MRP, and Price (PTR) — eleven fields, without
+exception, on every result. A tired chemist mid-queue reads brand names all day; salt, batch and
+expiry are what prevent a wrong-drug or expired-stock sale. None of the eleven is optional, and
+eleven fields do not fit one 32px line at 14px without truncation, so the row grows instead of
+dropping a field.
+
+```
+Line 1 (14px)        Name (600) · CONTENT dose FORM              stock · MRP  ┐ right-aligned
+Line 2 (12px muted)  Manufacturer · Batch · Expiry · Rack         PTR · badge ┘
+```
+
+- **CONTENT renders uppercase** (`text-transform: uppercase`) — a presentation rule, not a stored
+  data convention; the underlying salt string stays proper-case in the data layer.
+- **Batch and Expiry shown are the FEFO batch** — the batch Enter would select by default — as a
+  **preview**, not the picker. `F2` still opens the full batch popover (§Screen Specs) to override.
+- The expiry badge (§4) applies to this preview batch exactly as it does to a grid row: present only
+  when a band applies, using the same row-tint-free badge-only treatment here (the result list itself
+  is not row-tinted — tinting a scrollable list of candidates the chemist hasn't chosen yet would
+  read as "these are all a problem," when only the badge is informative at this stage).
+- Six rows visible before scroll, virtualised beyond that (Design System §Structure / review gate
+  item 25).
+- Working-grid rows (billing line grid, stock, purchases, day book, expiry registers) are unaffected
+  and stay 32px single-line, 14px — this amendment does not widen those.
 
 ### Hotkey chip
 11px uppercase, 1px border, muted text, 2px 6px padding, no fill. Right-aligned inside buttons:
@@ -404,8 +460,11 @@ Run against every screen before accepting it. Any FAIL is regenerated, not patch
 5. No action revealed only on hover
 
 **Density and type**
-6. Working rows 32px, admin rows 40px
+6. Working rows 32px, admin rows 40px. Search/picker result rows are the one documented exception —
+   44px, two-line (§7) — not a violation.
 7. Grid text 14px; nothing below 12px except the 11px hotkey chip
+7a. Every product search result shows all eleven mandatory fields without exception (§7,
+    "Search/picker result row")
 8. Every numeric cell tabular and right-aligned
 9. Every rupee figure in Indian grouping
 10. Complete and uncropped at 1366×768 and at 125% scaling
